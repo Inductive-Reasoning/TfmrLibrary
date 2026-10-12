@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using LinAlg = MathNet.Numerics.LinearAlgebra;
 using GeometryLib;
-using System.ComponentModel;
+using LinAlg = MathNet.Numerics.LinearAlgebra;
 
 namespace TfmrLib
 {
@@ -15,7 +15,7 @@ namespace TfmrLib
     {
         public int Id { get; internal set; }
         public string Label { get; set; } // HV, LV, RW, etc.
-        
+
         public Transformer ParentTransformer { get; internal set; }
 
         private readonly ObservableCollection<WindingSegment> _segments = new();
@@ -23,6 +23,7 @@ namespace TfmrLib
 
         public List<Terminal> Terminals { get; } = new();
 
+        // Read-only computed property
         public int NumTurns
         {
             get
@@ -36,6 +37,7 @@ namespace TfmrLib
             }
         }
 
+        // Read-only computed property
         public int NumConductors
         {
             get
@@ -68,14 +70,14 @@ namespace TfmrLib
             };
         }
 
-        internal void Initialize(Transformer parent, Graph graph, int id)
+        internal void Initialize(Transformer parent, int id)
         {
             ParentTransformer = parent;
             Id = id;
 
             for (int i = 0; i < Segments.Count; i++)
             {
-                Segments[i].Initialize(this, graph, i);
+                Segments[i].Initialize(this, parent.Graph, i);
             }
 
             foreach (var term in Terminals)

@@ -1,7 +1,9 @@
-using System.Numerics;
-using PureHDF;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
-using System.Runtime.CompilerServices;
+using PureHDF;
 
 namespace TfmrLib.FEM
 {
@@ -74,8 +76,7 @@ namespace TfmrLib.FEM
                     }
                     var couplingResults = new CouplingResults { TerminalNames = terminalNames.ToList(), Samples = samples.AsReadOnly() };
                     return new FEMResults { PhysicsType = physicsType, AnalysisType = analysisType, GeometryType = geometryType, Coupling = couplingResults };
-                }
-                else if (physicsType == PhysicsType.Electrostatics)
+                } else if (physicsType == PhysicsType.Electrostatics)
                 {
                     // Read capacitance matrix
                     var capacitanceDataset = coupling.Dataset("Capacitance/values");
@@ -91,8 +92,7 @@ namespace TfmrLib.FEM
                     }
                     var couplingResults = new CouplingResults { TerminalNames = terminalNames.ToList(), CapacitanceMatrix = capacitanceMatrix };
                     return new FEMResults { PhysicsType = physicsType, AnalysisType = analysisType, GeometryType = geometryType, Coupling = couplingResults };
-                }
-                else
+                } else
                 {
                     // Must be magnetostatic, so read static InductanceMatrix
                     throw new NotImplementedException();

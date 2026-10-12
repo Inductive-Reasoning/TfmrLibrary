@@ -2,6 +2,7 @@
 using GeometryLib;
 using MathNet.Numerics.Data.Text;
 using MathNet.Numerics.LinearAlgebra;
+using System.Runtime.InteropServices;
 
 namespace TfmrLib.Tests;
 
@@ -32,7 +33,7 @@ public class FEM_LC_Test
                         new WindingSegment
                         {
                             Label = "Segment 1",
-                            Geometry = new DiscWindingGeometry
+                            Geometry = new DiscSegmentGeometry
                             {
                                 ConductorType = new RectConductor
                                 {
@@ -40,7 +41,7 @@ public class FEM_LC_Test
                                     StrandWidth_mm = Conversions.in_to_mm(0.085),
                                     CornerRadius_mm = Conversions.in_to_mm(0.032),
                                     InsulationThickness_mm = Conversions.in_to_mm(0.018),
-                                    rho_c = 0
+                                    ConductorMaterial = Copper.Instance
                                 },
                                 NumDiscs = 1,
                                 TurnsPerDisc = 1,
@@ -62,7 +63,7 @@ public class FEM_LC_Test
                         new WindingSegment
                         {
                             Label = "Segment 1",
-                            Geometry = new DiscWindingGeometry
+                            Geometry = new DiscSegmentGeometry
                             {
                                 ConductorType = new RectConductor
                                 {
@@ -70,7 +71,7 @@ public class FEM_LC_Test
                                     StrandWidth_mm = Conversions.in_to_mm(0.085),
                                     CornerRadius_mm = Conversions.in_to_mm(0.032),
                                     InsulationThickness_mm = Conversions.in_to_mm(0.018),
-                                    rho_c = 0
+                                    ConductorMaterial = Copper.Instance
                                 },
                                 NumDiscs = 1,
                                 TurnsPerDisc = 1,

@@ -1,4 +1,4 @@
-using System.Numerics;
+using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
 using MeshLib;
 
@@ -6,13 +6,13 @@ namespace TfmrLib.FEM
 {
     public class FEMResults
     {
-        public PhysicsType PhysicsType {get; set;}
-        public GeometryType GeometryType {get; set;}
-        public AnalysisType AnalysisType {get; set;}
+        public PhysicsType PhysicsType { get; set; }
+        public GeometryType GeometryType { get; set; }
+        public AnalysisType AnalysisType { get; set; }
 
-        public Mesh Mesh {get; set;}
+        public Mesh Mesh { get; set; } = new();
 
-        public List<ScenarioField> ScenarioFields {get; set;} = new();
+        public List<ScenarioField> ScenarioFields { get; set; } = new();
 
         public CouplingResults? Coupling { get; init; }
     }
@@ -34,9 +34,9 @@ namespace TfmrLib.FEM
 
     public class ScenarioField
     {
-        public string ScenarioId {get; set;}
-        public string ScenarioName {get; set;}
-        public double? FrequencyHz {get; set;}
+        public required string ScenarioId { get; set; }
+        public required string ScenarioName { get; set; }
+        public double? FrequencyHz { get; set; }
 
     }
 

@@ -130,7 +130,7 @@ namespace TfmrLib
     {
         public int Count { get; set; }
         public double SpacerHeight_mm { get; set; }
-        public override string ToString() => $"{Count} × {SpacerHeight_mm} mm";
+        public override string ToString() => $"{Count} x {SpacerHeight_mm} mm";
     }
 
     public class CompositeSpacerPatternElement : SpacerPatternElement

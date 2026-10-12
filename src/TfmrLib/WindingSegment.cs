@@ -39,8 +39,8 @@ namespace TfmrLib
             }
         }
 
-        private WindingGeometry _geometry;
-        public WindingGeometry Geometry
+        private SegmentGeometry _geometry;
+        public SegmentGeometry Geometry
         {
             get => _geometry;
             set
@@ -58,60 +58,88 @@ namespace TfmrLib
             ParentWinding = parent;
             Id = id;
 
-            if (Geometry != null)
+            if (Geometry is null)
+            {
+                throw new ArgumentNullException("Geometry");
+            }
+            else
             {
                 Geometry.ParentSegment = this;
             }
 
             int totalTurns = Geometry?.NumTurns ?? 0;
 
-            // Sort taps by turn number
-            // Note this will quietly drop taps with TurnNumber >= NumTurns
-            var sortedTaps = Taps.OrderBy(t => t.TurnNumber).Where(t => t.TurnNumber > 0 && t.TurnNumber < totalTurns).ToList();
-
-            // Define "cuts" (discrete sections between terminal nodes, e.g. start/end or tap) - 0, taps..., total
-            var cuts = new List<int> { 0 };
-            cuts.AddRange(sortedTaps.Select(t => t.TurnNumber));
-            cuts.Add(totalTurns);
-
-            // Create Nodes for each cut point
-            var nodes = new List<Node>();
-            
-            // Start Node
-            nodes.Add(graph.CreateNode($"Wdg{parent.Id}_Seg{id}_Start"));
-
-            // Tap Nodes
-            for (int i = 0; i < sortedTaps.Count; i++)
-            {
-                var tap = sortedTaps[i];
-                var n = graph.CreateNode($"Wdg{parent.Id}_Seg{id}_Tap_{tap.Label}");
-                tap.Node = n;
-                nodes.Add(n);
-            }
-
-            // End Node
-            nodes.Add(graph.CreateNode($"Wdg{parent.Id}_Seg{id}_End"));
-
-            // Create Branches
-            // TODO: Do parallel strands need separate branches? Likely
             Branches.Clear();
-            for (int i = 0; i < cuts.Count - 1; i++)
+            Node startNode = null;
+            List<Node> tapNodes = [];
+            Node endNode = null;
+
+            for (int p = 0; p < Geometry.NumParallelConductors; p++)
             {
-                int startTurn = cuts[i];
-                int endTurn = cuts[i+1];
-                int numBranchTurns = endTurn - startTurn;
+                // Create the shared start node only for the first parallel branch, then reuse it
+                if (p == 0)
+                {
+                    startNode = graph.CreateNode($"Wdg{parent.Id}_Seg{id}_Start");
+                }
+
+                List<Node> nodes = [];
+                nodes.Add(startNode);
+
+                var cuts = new List<int> { 0 };
+
+                if (Taps.Count > 0)
+                {
+                    // Sort taps by turn number
+                    // Note this will quietly drop taps with TurnNumber >= NumTurns
+                    var sortedTaps = Taps.OrderBy(t => t.TurnNumber).Where(t => t.TurnNumber > 0 && t.TurnNumber < totalTurns).ToList();
+
+                    // Define "cuts" (discrete sections between terminal nodes, e.g. start/end or tap) - 0, taps..., total
+                    cuts.AddRange(sortedTaps.Select(t => t.TurnNumber));
+
+                    // Tap Nodes
+                    for (int i = 0; i < sortedTaps.Count; i++)
+                    {
+                        var tap = sortedTaps[i];
+                        if (p == 0)
+                        {
+                            var n = graph.CreateNode($"Wdg{parent.Id}_Seg{id}_Tap_{tap.Label}");
+                            tapNodes.Add(n);
+                        }
+                        tap.Node = tapNodes[i];
+                        nodes.Add(tap.Node);
+                    }
+                }
+
+                // Create the shared end node only for the first parallel branch, then reuse it
+                if (p == 0)
+                {
+                    endNode = graph.CreateNode($"Wdg{parent.Id}_Seg{id}_End");
+                }
                 
-                var branch = new Branch(
-                    this, 
-                    i, 
-                    nodes[i], 
-                    nodes[i+1], 
-                    startTurn, 
-                    numBranchTurns
-                );
-                
-                Branches.Add(branch);
-                graph.Register(branch);
+                nodes.Add(endNode);
+
+                cuts.Add(totalTurns);
+
+
+                // Create Branches
+                for (int i = 0; i < cuts.Count - 1; i++)
+                {
+                    int startTurn = cuts[i];
+                    int endTurn = cuts[i+1];
+                    int numBranchTurns = endTurn - startTurn;
+                    
+                    var branch = new Branch(
+                        this, 
+                        i, 
+                        nodes[i], 
+                        nodes[i+1], 
+                        startTurn, 
+                        numBranchTurns
+                    );
+                    
+                    Branches.Add(branch);
+                    graph.Register(branch);
+                }
             }
         }
     }

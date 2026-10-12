@@ -31,7 +31,7 @@ public class MTL_Matrices
                         new WindingSegment
                         {
                             Label = "Segment 1",
-                            Geometry = new DiscWindingGeometry
+                            Geometry = new DiscSegmentGeometry
                             {
                                 ConductorType = new RectConductor
                                 {
@@ -39,7 +39,7 @@ public class MTL_Matrices
                                     StrandWidth_mm = Conversions.in_to_mm(0.085),
                                     CornerRadius_mm = Conversions.in_to_mm(0.032),
                                     InsulationThickness_mm = Conversions.in_to_mm(0.018),
-                                    rho_c = 0
+                                    ConductorMaterial = Copper.Instance
                                 },
                                 NumDiscs = 4,
                                 TurnsPerDisc = 4,
@@ -67,7 +67,7 @@ public class MTL_Matrices
                         new WindingSegment
                         {
                             Label = "Segment 1",
-                            Geometry = new InterleavedDiscWindingGeometry
+                            Geometry = new InterleavedDiscSegmentGeometry
                             {
                                 Interleaving = [.. Enumerable.Repeat(new InterleavingSchedule.InterleavedGroup(1, InterleavingSchedule.InterleavingType.FullStearns), 3)],
                                 ConductorType = new RectConductor
@@ -76,7 +76,7 @@ public class MTL_Matrices
                                     StrandWidth_mm = Conversions.in_to_mm(0.085),
                                     CornerRadius_mm = Conversions.in_to_mm(0.032),
                                     InsulationThickness_mm = Conversions.in_to_mm(0.018),
-                                    rho_c = 0
+                                    ConductorMaterial = Copper.Instance
                                 },
                                 NumDiscs = 4,
                                 TurnsPerDisc = 4,

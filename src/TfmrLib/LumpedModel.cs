@@ -1,21 +1,21 @@
-﻿using MathNet.Numerics;
-using MathNet.Numerics.Distributions;
-using MathNet.Numerics.LinearAlgebra;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics;
+using MathNet.Numerics.Distributions;
+using MathNet.Numerics.LinearAlgebra;
 using TfmrLib;
 using LinAlg = MathNet.Numerics.LinearAlgebra;
 
 namespace TfmrLib
 {
-    using Matrix_d = LinAlg.Matrix<double>;
     using Matrix_c = LinAlg.Matrix<Complex>;
-    using Vector_d = LinAlg.Vector<double>;
+    using Matrix_d = LinAlg.Matrix<double>;
     using Vector_c = LinAlg.Vector<Complex>;
+    using Vector_d = LinAlg.Vector<double>;
 
     public class LumpedModel : FreqResponseModel
     {
@@ -27,7 +27,11 @@ namespace TfmrLib
         private int total_turns = 0;
 
         public LumpedModel(Transformer tfmr, IRLCMatrixCalculator matrixCalculator) : base(tfmr, matrixCalculator) { }
-        public LumpedModel(Transformer tfmr, IRLCMatrixCalculator matrixCalculator, double minFreq, double maxFreq, int numSteps) : base(tfmr, matrixCalculator, minFreq, maxFreq, numSteps) { }
+        public LumpedModel(Transformer tfmr,
+                           IRLCMatrixCalculator matrixCalculator,
+                           double minFreq,
+                           double maxFreq,
+                           int numSteps) : base(tfmr, matrixCalculator, minFreq, maxFreq, numSteps) { }
 
         protected override void Initialize()
         {
@@ -40,7 +44,7 @@ namespace TfmrLib
             }
 
             // Gamma is the diagonal matrix of conductors turn lengths
-            Gamma = M_d.Dense(total_turns, total_turns); 
+            Gamma = M_d.Dense(total_turns, total_turns);
 
             int start = 0;
             foreach (Winding wdg in Tfmr.Windings)
@@ -116,7 +120,8 @@ namespace TfmrLib
             }
             Matrix_d HA1 = Q_seg.Append(HA12);
 
-            // The remaining rows are typically constraints on current (KCL), but we do need to set the final boundary condition
+            // The remaining rows are typically constraints on current (KCL), but we do need to set the 
+            // final boundary condition
             Matrix_d HA21 = M_d.Dense(seg_geo.NumConductors, seg_geo.NumConductors);
             Matrix_d HA22 = M_d.Dense(seg_geo.NumConductors, seg_geo.NumConductors);
             HA22[seg_geo.NumConductors - 1, seg_geo.NumConductors - 1] = 1.0;
@@ -128,7 +133,7 @@ namespace TfmrLib
 
         public override (Complex Z_term, Vector_c V_EndOfTurn) CalcResponseAtFreq(double f)
         {
-            Vector_c V_TurnEnd_AtF = V_c.Dense(total_turns-1);
+            Vector_c V_TurnEnd_AtF = V_c.Dense(total_turns - 1);
 
             Matrix_d L_PUL = MatrixCalculator.Calc_Lmatrix(Tfmr, f);
 
@@ -144,7 +149,8 @@ namespace TfmrLib
             Matrix_c Z = M_c.Dense(0, 0);
 
             //Y = 1j * 2 * math.pi * f * C + Q.transpose() @np.linalg.inv(R + 1j * 2 * math.pi * f * L)@Q
-            var Y = G.ToComplex() + Complex.ImaginaryOne * 2 * Math.PI * f * C.ToComplex() + Q.ToComplex().Transpose() * (R.ToComplex() + Complex.ImaginaryOne * 2 * Math.PI * f * L.ToComplex()).Inverse() * Q.ToComplex();
+            var Y = G.ToComplex() + Complex.ImaginaryOne * 2 * Math.PI * f * C.ToComplex() + Q.ToComplex().Transpose()
+                    * (R.ToComplex() + Complex.ImaginaryOne * 2 * Math.PI * f * L.ToComplex()).Inverse() * Q.ToComplex();
             if (!Y.ConditionNumber().IsInfinity())
             {
                 Z = Y.Inverse();
@@ -153,10 +159,10 @@ namespace TfmrLib
             {
                 Console.WriteLine("Matrix is shite");
             }
-            
-            for (int t = 0; t < (total_turns-1); t++)
+
+            for (int t = 0; t < (total_turns - 1); t++)
             {
-                V_TurnEnd_AtF[t] = Z[0, t+1] / Z[0, 0];
+                V_TurnEnd_AtF[t] = Z[0, t + 1] / Z[0, 0];
             }
 
             return (Z[0, 0], V_TurnEnd_AtF);

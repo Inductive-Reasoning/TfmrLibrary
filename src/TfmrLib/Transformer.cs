@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GeometryLib;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -32,12 +29,16 @@ namespace TfmrLib
         private readonly ObservableCollection<Winding> _windings = new();
         public IList<Winding> Windings => _windings;
 
-        public double eps_oil = 1.0; //2.2;
+        public IMaterial InsulatingFluid { get; set; } = Oil.Instance;
+
         public double ins_loss_factor = 0.03;
 
         public Transformer()
         {
-            Core = new Core(this);
+            _core = new Core(this)
+            {
+                ParentTransformer = this
+            };
 
             _windings.CollectionChanged += (sender, e) =>
             {
@@ -67,7 +68,7 @@ namespace TfmrLib
 
             for (int i = 0; i < Windings.Count; i++)
             {
-                Windings[i].Initialize(this, Graph, i);
+                Windings[i].Initialize(this, i);
             }
             return this;
         }
@@ -110,11 +111,11 @@ namespace TfmrLib
         {
             var geometry = new Geometry();
             TagManager.ClearTags();
-            
+
             var outer_bdry = Core.GenerateGeometry(ref geometry);
 
             List<GeomLineLoop> conductorins_bdrys = new List<GeomLineLoop>();
-            
+
             foreach (Winding wdg in Windings)
             {
                 conductorins_bdrys.AddRange(wdg.GenerateGeometry(ref geometry));
@@ -124,6 +125,25 @@ namespace TfmrLib
             TagManager.TagEntityByString(interior_surface, "InteriorDomain");
 
             return geometry;
+        }
+
+        public Graph GenerateExtendedGraph()
+        {
+            Graph ext_graph = new();
+            // This assumes each terminal is not connected to another terminal.
+            // We'll probably have to revisit this
+            foreach (var term in Terminals)
+            {
+                var startNode = term.InternalNode;
+                foreach (var branch in Graph.GetBranchesForNode(startNode))
+                {
+                    // We need a way to connect the branch to the underlying winding details
+                    // Should branches be WindingSegments? How would that effect WindingSegments
+                    // with tap?
+                }
+            }
+
+            return ext_graph;
         }
     }
 }

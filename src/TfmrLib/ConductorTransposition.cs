@@ -1,4 +1,6 @@
-﻿namespace TfmrLib
+﻿using System.Collections.Generic;
+
+namespace TfmrLib
 {
     public enum TranspositionType { None, Gamma, Epsilon, Hobart, Continuous }
 

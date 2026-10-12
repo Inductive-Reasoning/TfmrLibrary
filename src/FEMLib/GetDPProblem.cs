@@ -1,11 +1,12 @@
-using MathNet.Numerics.Data.Text;
-using MathNet.Numerics.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics.Data.Text;
+using MathNet.Numerics.LinearAlgebra;
 using LinAlg = MathNet.Numerics.LinearAlgebra;
 using Vector_d = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
@@ -175,15 +176,13 @@ namespace TfmrLib.FEM
                         p.StartInfo.Arguments =
                             $"--wait -- bash -lc \"'{mygetdp}' {args}; code=$?; echo $code > '{exitFile}'; " +
                             "echo; echo 'getdp exited with code '$code'. Press Enter to close...'; read\"";
-                    }
-                    else if (term.Contains("xterm"))
+                    } else if (term.Contains("xterm"))
                     {
                         p.StartInfo.FileName = term;
                         p.StartInfo.Arguments =
                             $"-e bash -lc \"'{mygetdp}' {args}; code=$?; echo $code > '{exitFile}'; " +
                             "echo; echo 'getdp exited with code '$code'. Press Enter to close...'; read\"";
-                    }
-                    else // konsole
+                    } else // konsole
                     {
                         // --noclose keeps window by default, but we still add a read for consistency
                         p.StartInfo.FileName = term;
@@ -206,8 +205,7 @@ namespace TfmrLib.FEM
                     }
                     if (exitCode != 0)
                         throw new Exception($"getdp exited with code {exitCode}");
-                }
-                finally
+                } finally
                 {
                     try { if (File.Exists(exitFile)) File.Delete(exitFile); } catch { }
                 }
@@ -524,8 +522,7 @@ namespace TfmrLib.FEM
             if (core.CoreLegRadius_mm > 0)
             {
                 fem.BoundaryConditions.Add(new DirichletBoundaryCondition() { Name = "CoreLeg", EntityGroupName = "CoreLeg", Potential = 0.0 });
-            }
-            else
+            } else
             {
                 fem.BoundaryConditions.Add(new NeumannBoundaryCondition() { Name = "Axis", EntityGroupName = "Axis", Flux = 0.0 });
             }

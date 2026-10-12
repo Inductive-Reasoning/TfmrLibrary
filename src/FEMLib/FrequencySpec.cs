@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace TfmrLib.FEM
 {
     public abstract record FrequencySpec

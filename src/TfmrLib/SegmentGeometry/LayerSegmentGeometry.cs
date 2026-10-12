@@ -1,27 +1,29 @@
-﻿using GeometryLib;
+﻿using System;
+using System.Collections.Generic;
+using GeometryLib;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace TfmrLib
 {
-    public class LayerWindingGeometry : WindingGeometry
+    public class LayerSegmentGeometry : SegmentGeometry
     {
         public int NumberOfLayers { get; set; }
         public double TurnsPerLayer { get; set; }
         public double InterLayerInsulation_mm { get; set; }
         public double RadialBuild_mm { get; set; }
 
-        public override double WindingHeight_mm => TurnsPerLayer * NumParallelConductors * ConductorType.TotalHeight_mm;
+        public override double SegmentHeight_mm => TurnsPerLayer * NumParallelConductors * ConductorType.TotalHeight_mm;
 
-        public override double WindingRadialBuild_mm => NumberOfLayers * ConductorType.TotalWidth_mm + (NumberOfLayers - 1) * InterLayerInsulation_mm;
+        public override double SegmentRadialBuild_mm => NumberOfLayers * ConductorType.TotalWidth_mm + (NumberOfLayers - 1) * InterLayerInsulation_mm;
 
-        public LayerWindingGeometry()
+        public LayerSegmentGeometry()
         {
-            Type = WindingType.Layer;
+            Type = SegmentType.Layer;
         }
 
-        public LayerWindingGeometry(WindingSegment parentSegment) : base(parentSegment)
+        public LayerSegmentGeometry(WindingSegment parentSegment) : base(parentSegment)
         {
-            Type = WindingType.Layer;
+            Type = SegmentType.Layer;
         }
 
         protected override void ComputeConductorLocations()
@@ -45,7 +47,7 @@ namespace TfmrLib
 
         public override GeomLineLoop[] GenerateGeometry(ref Geometry geometry)
         {
-            var wdg_rect = geometry.AddRectangle(InnerRadius_mm + WindingRadialBuild_mm / 2, WindingHeight_mm / 2 + DistanceAboveBottomYoke_mm - Core.WindowHeight_mm / 2, WindingHeight_mm, WindingRadialBuild_mm);
+            var wdg_rect = geometry.AddRectangle(InnerRadius_mm + SegmentRadialBuild_mm / 2, SegmentHeight_mm / 2 + DistanceAboveBottomYoke_mm - Core.WindowHeight_mm / 2, SegmentHeight_mm, SegmentRadialBuild_mm);
             var rtn_loops = new GeomLineLoop[1];
             rtn_loops[0] = wdg_rect;
             return rtn_loops;
@@ -68,5 +70,5 @@ namespace TfmrLib
         }
     }
 
-    
+
 }

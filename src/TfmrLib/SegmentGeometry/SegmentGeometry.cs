@@ -1,15 +1,12 @@
-﻿using GeometryLib;
-using MathNet.Numerics.LinearAlgebra;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LinAlg = MathNet.Numerics.LinearAlgebra;
+using GeometryLib;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace TfmrLib
 {
-    public enum WindingType
+    public enum SegmentType
     {
         Disc,
         Layer,
@@ -36,7 +33,7 @@ namespace TfmrLib
     // conductor.  A "turn" is a single complete loop of all parallel strands.  The physical location of a strand
     // is defined by the disc number and the layer number.
 
-    public abstract class WindingGeometry
+    public abstract class SegmentGeometry
     {
         // Entity relationships
         public WindingSegment ParentSegment { get; set; }
@@ -68,27 +65,27 @@ namespace TfmrLib
         }
 
         // Public properties
-        public WindingType Type { get; protected set; }
-        public virtual int NumTurns { get; set; } // Total number of complete turns in the winding (overriden in multistart)
+        public SegmentType Type { get; protected set; }
+        public virtual int NumTurns { get; set; } // Total number of complete turns in the winding segment (overriden in multistart)
         public int NumConductors => NumTurns * NumParallelConductors;
         public Conductor ConductorType { get; set; }
         public int NumParallelConductors { get; set; } = 1; // Number of conductors in parallel
         public Orientation ParallelOrientation { get; set; } = Orientation.Radial; // Orientation of parallel conductors
         public List<ConductorTransposition> ExternalTranspositions { get; set; } = []; // Type of conductor transposition
-        public double InnerRadius_mm { get; set; } // Inner radius of the winding in mm
+        public double InnerRadius_mm { get; set; } // Inner radius of the winding segment in mm
         public double DistanceAboveBottomYoke_mm { get; set; } // Distance from the bottom yoke to the bottom of the winding
 
         // Computed properties
-        public abstract double WindingHeight_mm { get; }
-        public abstract double WindingRadialBuild_mm { get; }
+        public abstract double SegmentHeight_mm { get; }
+        public abstract double SegmentRadialBuild_mm { get; }
 
         // Constructors
-        public WindingGeometry()
+        public SegmentGeometry()
         {
             // Default constructor
         }
 
-        public WindingGeometry(WindingSegment parentSegment)
+        public SegmentGeometry(WindingSegment parentSegment)
         {
             ParentSegment = parentSegment;
         }
@@ -131,5 +128,5 @@ namespace TfmrLib
         }
 
     }
-    
+
 }

@@ -6,7 +6,7 @@ namespace TfmrLib
     {
         public WindingSegment ParentSegment { get; }
         public int Id { get; }
-        
+
         public int StartTurnIndex { get; }
         public int NumTurns { get; }
 
@@ -16,7 +16,7 @@ namespace TfmrLib
         public Node StartNode => _startNode;
         public Node EndNode => _endNode;
 
-        public IReadOnlyList<Node> Ports => new[] { _startNode, _endNode };
+        public IReadOnlyList<Node> Terminals => new[] { _startNode, _endNode };
 
         public Branch(WindingSegment parent, int id, Node startNode, Node endNode, int startTurn, int numTurns)
         {
@@ -28,7 +28,7 @@ namespace TfmrLib
             NumTurns = numTurns;
         }
 
-        public void RepointPort(Node oldNode, Node newNode)
+        public void RepointTerminal(Node oldNode, Node newNode)
         {
             bool found = false;
             if (ReferenceEquals(_startNode, oldNode))

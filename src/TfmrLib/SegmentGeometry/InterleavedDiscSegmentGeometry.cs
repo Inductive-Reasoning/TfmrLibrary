@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TfmrLib
 {
@@ -16,7 +18,7 @@ namespace TfmrLib
         // Maintained at exactly NumDiscs length, auto-filled with None.
         public record InterleavedGroup(int NumDiscPairs, InterleavingType Type);
 
-        public InterleavingSchedule() {}
+        public InterleavingSchedule() { }
 
         public InterleavingSchedule(int numDiscs)
         {
@@ -41,8 +43,7 @@ namespace TfmrLib
             if (discPairs < _numDiscs / 2)
             {
                 AddRange(Enumerable.Repeat(new InterleavedGroup(1, InterleavingType.None), _numDiscs / 2 - Count));
-            }
-            else if (Count > _numDiscs / 2)
+            } else if (Count > _numDiscs / 2)
             {
                 RemoveRange(_numDiscs / 2, Count - _numDiscs / 2);
             }
@@ -59,10 +60,10 @@ namespace TfmrLib
             throw new Exception($"Ran out of specified interleaving type for disc pair {discPair}");
         }
     }
-    
-    public class InterleavedDiscWindingGeometry : DiscWindingGeometry
+
+    public class InterleavedDiscSegmentGeometry : DiscSegmentGeometry
     {
-        
+
         public InterleavingSchedule Interleaving { get; set; } = new();
 
         private int _numDiscs;
@@ -127,20 +128,17 @@ namespace TfmrLib
                             {
                                 strand = 0;
                                 turn_in_disc_pair++;
-                            }
-                            else
+                            } else
                             {
                                 strand++;
                             }
-                        }
-                        else if (interleaving.Type == InterleavingSchedule.InterleavingType.PartialStearns) // Turns are interleaved, strands are not
+                        } else if (interleaving.Type == InterleavingSchedule.InterleavingType.PartialStearns) // Turns are interleaved, strands are not
                         {
                             if (isInterleavedTurn)
                             {
                                 System.Diagnostics.Debug.WriteLine($"    turn={pair_start_turn + turn_in_disc_pair + TurnsPerDisc}, strand={strand}, rad_pos={rad_pos}, turn_in_disc={turn_in_disc_pair}, strand={strand}, physIndex=({physIndex.Disc},{physIndex.Layer})");
                                 ConductorIndexToElectricalLocation[conductorIndex] = new ConductorElectricalLocation(pair_start_turn + turn_in_disc_pair + TurnsPerDisc, strand);
-                            }
-                            else
+                            } else
                             {
                                 System.Diagnostics.Debug.WriteLine($"    turn={pair_start_turn + turn_in_disc_pair}, strand={strand}, rad_pos={rad_pos}, turn_in_disc={turn_in_disc_pair}, strand={strand}, physIndex=({physIndex.Disc},{physIndex.Layer})");
                                 ConductorIndexToElectricalLocation[conductorIndex] = new ConductorElectricalLocation(pair_start_turn + turn_in_disc_pair, strand);
@@ -152,25 +150,21 @@ namespace TfmrLib
                                 {
                                     turn_in_disc_pair++;
                                     isInterleavedTurn = false;
-                                }
-                                else
+                                } else
                                 {
                                     isInterleavedTurn = true;
                                 }
-                            }
-                            else
+                            } else
                             {
                                 strand++;
                             }
-                        }
-                        else if (interleaving.Type == InterleavingSchedule.InterleavingType.FullStearns)
+                        } else if (interleaving.Type == InterleavingSchedule.InterleavingType.FullStearns)
                         {
                             if (isInterleavedTurn)
                             {
                                 System.Diagnostics.Debug.WriteLine($"    turn={pair_start_turn + turn_in_disc_pair + TurnsPerDisc}, strand={strand}, rad_pos={rad_pos}, turn_in_disc={turn_in_disc_pair}, strand={strand}, physIndex=({physIndex.Disc},{physIndex.Layer})");
                                 ConductorIndexToElectricalLocation[conductorIndex] = new ConductorElectricalLocation(pair_start_turn + turn_in_disc_pair + TurnsPerDisc, strand);
-                            }
-                            else
+                            } else
                             {
                                 System.Diagnostics.Debug.WriteLine($"    turn={pair_start_turn + turn_in_disc_pair}, strand={strand}, rad_pos={rad_pos}, turn_in_disc={turn_in_disc_pair}, strand={strand}, physIndex=({physIndex.Disc},{physIndex.Layer})");
                                 ConductorIndexToElectricalLocation[conductorIndex] = new ConductorElectricalLocation(pair_start_turn + turn_in_disc_pair, strand);
@@ -182,14 +176,12 @@ namespace TfmrLib
                                     strand = 0;
                                     turn_in_disc_pair++;
                                     isInterleavedTurn = false;
-                                }
-                                else
+                                } else
                                 {
                                     isInterleavedTurn = false;
                                     strand++;
                                 }
-                            }
-                            else
+                            } else
                             {
                                 isInterleavedTurn = true;
                             }
@@ -211,16 +203,16 @@ namespace TfmrLib
             }
         }
 
-        public InterleavedDiscWindingGeometry()
+        public InterleavedDiscSegmentGeometry()
         {
-            Type = WindingType.InterleavedDisc;
+            Type = SegmentType.InterleavedDisc;
         }
 
-        public InterleavedDiscWindingGeometry(WindingSegment parentSegment) : base(parentSegment)
+        public InterleavedDiscSegmentGeometry(WindingSegment parentSegment) : base(parentSegment)
         {
-            Type = WindingType.InterleavedDisc;
+            Type = SegmentType.InterleavedDisc;
         }
     }
 
-    
+
 }

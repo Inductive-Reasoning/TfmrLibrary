@@ -1,15 +1,17 @@
-﻿using GeometryLib;
+﻿using System;
+using System.Collections.Generic;
+using GeometryLib;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace TfmrLib
 {
-    public class HelicalWindingGeometry : WindingGeometry
+    public class HelicalSegmentGeometry : SegmentGeometry
     {
         public RadialSpacerPattern SpacerPattern { get; set; }
 
         public virtual int NumMechTurns => NumTurns + 1; // Total mechanical turns in the winding
 
-        public override double WindingHeight_mm
+        public override double SegmentHeight_mm
         {
             get
             {
@@ -20,17 +22,17 @@ namespace TfmrLib
             }
         }
 
-        public override double WindingRadialBuild_mm => ConductorType.TotalWidth_mm * NumParallelConductors;
+        public override double SegmentRadialBuild_mm => ConductorType.TotalWidth_mm * NumParallelConductors;
 
-        public HelicalWindingGeometry()
+        public HelicalSegmentGeometry()
         {
-            Type = WindingType.Helical;
+            Type = SegmentType.Helical;
             SpacerPattern = new RadialSpacerPattern();
         }
 
-        public HelicalWindingGeometry(WindingSegment parentSegment) : base(parentSegment)
+        public HelicalSegmentGeometry(WindingSegment parentSegment) : base(parentSegment)
         {
-            Type = WindingType.Helical;
+            Type = SegmentType.Helical;
         }
 
         protected override void ComputeConductorLocations()
@@ -46,13 +48,12 @@ namespace TfmrLib
             double z_mid;
             if (ParentSegment.StartLocation == StartNodeLocation.Top)
             {
-                z_mid = DistanceAboveBottomYoke_mm + WindingHeight_mm - ConductorType.TotalHeight_mm / 2; //Turn 0
-                wdg_direction = -1; // Winding goes from top to bottom
-            }
-            else
+                z_mid = DistanceAboveBottomYoke_mm + SegmentHeight_mm - ConductorType.TotalHeight_mm / 2; //Turn 0
+                wdg_direction = -1; // Winding segment goes from top to bottom
+            } else
             {
                 z_mid = DistanceAboveBottomYoke_mm + ConductorType.TotalHeight_mm / 2; // Turn 0
-                wdg_direction = 1; // Winding goes from bottom to top
+                wdg_direction = 1; // Winding segment goes from bottom to top
             }
 
             for (int turn = 0; turn < NumMechTurns; turn++)
@@ -81,8 +82,7 @@ namespace TfmrLib
                         double turn_length = 2.0 * Math.PI * r_mid;
                         _conductorLocations.Add(new ConductorLocationAxi(r_mid, z_mid, turn_length));
                     }
-                }
-                else if (ParallelOrientation == Orientation.Axial)
+                } else if (ParallelOrientation == Orientation.Axial)
                 {
                     for (int strand = 0; strand < NumParallelConductors; strand++)
                     {
@@ -117,13 +117,12 @@ namespace TfmrLib
             double z_mid;
             if (ParentSegment.StartLocation == StartNodeLocation.Top)
             {
-                z_mid = DistanceAboveBottomYoke_mm + WindingHeight_mm - ConductorType.TotalHeight_mm / 2; //Turn 0
-                wdg_direction = -1; // Winding goes from top to bottom
-            }
-            else
+                z_mid = DistanceAboveBottomYoke_mm + SegmentHeight_mm - ConductorType.TotalHeight_mm / 2; //Turn 0
+                wdg_direction = -1; // Winding segment goes from top to bottom
+            } else
             {
                 z_mid = DistanceAboveBottomYoke_mm + ConductorType.TotalHeight_mm / 2; // Turn 0
-                wdg_direction = 1; // Winding goes from bottom to top
+                wdg_direction = 1; // Winding segment goes from bottom to top
             }
 
             int numSpacers = NumMechTurns - 1; // Spacers between each turn
@@ -169,8 +168,7 @@ namespace TfmrLib
                             var insulation_surface = geometry.AddSurface(insulation_bdry, conductor_bdry);
                             Tags.TagEntityByLocation(insulation_surface, loc, TagType.InsulationSurface);
                             conductorins_bdrys[cond_idx] = insulation_bdry;
-                        }
-                        else
+                        } else
                         {
                             conductorins_bdrys[cond_idx] = conductor_bdry;
                         }
@@ -179,8 +177,7 @@ namespace TfmrLib
                         Tags.TagEntityByLocation(conductor_surface, loc, TagType.ConductorSurface);
                         cond_idx++;
                     }
-                }
-                else if (ParallelOrientation == Orientation.Axial)
+                } else if (ParallelOrientation == Orientation.Axial)
                 {
                     for (int strand = 0; strand < NumParallelConductors; strand++)
                     {
@@ -203,8 +200,7 @@ namespace TfmrLib
                             var insulation_surface = geometry.AddSurface(insulation_bdry, conductor_bdry);
                             Tags.TagEntityByLocation(insulation_surface, loc, TagType.InsulationSurface);
                             conductorins_bdrys[cond_idx] = insulation_bdry;
-                        }
-                        else
+                        } else
                         {
                             conductorins_bdrys[cond_idx] = insulation_bdry;
                         }
@@ -237,5 +233,5 @@ namespace TfmrLib
         }
     }
 
-    
+
 }

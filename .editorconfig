@@ -1,0 +1,66 @@
+# Top-most EditorConfig file - stops looking up the directory tree
+root = true
+
+[*.cs]
+#### Core IDE Indentation Preferences ####
+#indent_style = space
+#indent_size = 4
+#tab_width = 4
+#end_of_line = lf
+insert_final_newline = true
+
+#### Code Style & Rules severity ####
+# Treats styling inconsistencies as compilation/IDE warnings
+#dotnet_diagnostic.IDE0055.severity = warning
+
+#### C# Formatting Rules: Braces (Curly Brackets) ####
+# Set to 'none' to put braces on the SAME line as the statement.
+# Set to 'all' or specific scopes if you want them on a NEW line.
+csharp_new_line_before_open_brace = all
+
+# Controls where closing braces require new lines
+csharp_new_line_before_close_brace = true
+csharp_new_line_before_else = false
+csharp_new_line_before_catch = false
+csharp_new_line_before_finally = false
+
+#### C# Formatting Rules: Spacing & Padding ####
+# Space after keywords in control flow statements (e.g., if (true))
+csharp_space_after_keywords_in_control_flow_statements = true
+
+# Space before/after operator symbols
+csharp_space_around_binary_operators = before_and_after
+
+# Avoid spaces inside empty parameter argument parenthesis ()
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+
+#### Roslyn Hard Line Wrapping Limits ####
+# Sets the targeted limit where Roslyn code style analyzers will flag long lines
+csharp_max_line_length = 120
+
+#### Intelligent Structural Wrapping Preferences ####
+# Wrap long, multi-attribute declarations onto individual lines
+csharp_max_attribute_length_for_same_line = 40
+csharp_place_type_attribute_on_same_line = false
+csharp_place_method_attribute_on_same_line = false
+
+# Wrap method arguments/parameters elegantly if they get too long
+# Options: wrap_if_long (wraps when line length exceeded) | chop_always (one per line)
+csharp_wrap_parameters_style = wrap_if_long
+csharp_max_formal_parameters_on_line = 3
+
+# Keep binary operator signs (&&, ||, +, etc.) grouped tightly on the new line when wrapped
+csharp_wrap_before_binary_opsign = true
+
+# Wrap long comma-separated items (like initializers or argument lists) before the comma
+csharp_wrap_before_comma = false
+
+# Prefer wrapping LINQ queries logically by clauses
+csharp_wrap_linq_expressions = true
+
+#### Keep Compact Elements Clean (Prevent over-wrapping) ####
+# Do not force line wraps on tiny, self-contained single-line expressions
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = true
+csharp_place_expr_method_on_single_line = true

@@ -8,7 +8,7 @@ namespace TfmrLib.FEM
 {
     public class BoundaryCondition : INamed
     {
-        public string Name { get; init; }
+        public required string Name { get; init; }
         public string EntityGroupName { get; set; } = string.Empty;
     }
 

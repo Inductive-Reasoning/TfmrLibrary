@@ -46,7 +46,7 @@ namespace TfmrLib
                         {
                             idx_i++;
                             (double r_i, double z_i) = segmentGeometry.GetConductorPosition(turn, strand);
-                            L[idx_i, idx_i] = CalcSelfInductance(segmentGeometry.ConductorType.BareHeight_mm, segmentGeometry.ConductorType.BareWidth_mm, r_i, segmentGeometry.ConductorType.rho_c, f);// / (2 * Math.PI * r_i);
+                            L[idx_i, idx_i] = CalcSelfInductance(segmentGeometry.ConductorType.BareHeight_mm, segmentGeometry.ConductorType.BareWidth_mm, r_i, segmentGeometry.ConductorType.ConductorMaterial.rho, f);// / (2 * Math.PI * r_i);
 
                             int idx_j = -1;
                             foreach (Winding otherWdg in tfmr.Windings)

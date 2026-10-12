@@ -32,7 +32,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "Segment 1",
-                                Geometry = new DiscWindingGeometry
+                                Geometry = new DiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -67,7 +67,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "Segment 1",
-                                Geometry = new InterleavedDiscWindingGeometry
+                                Geometry = new InterleavedDiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -89,8 +89,8 @@ namespace TfmrLib
                                             new() { Count = 5, SpacerHeight_mm = Conversions.in_to_mm(0.188) }
                                         }
                                     },
-                                    Interleaving = new() { new InterleavingSchedule.InterleavedGroup(1, InterleavingSchedule.InterleavingType.FullStearns), 
-                                                            new InterleavingSchedule.InterleavedGroup(1, InterleavingSchedule.InterleavingType.PartialStearns), 
+                                    Interleaving = new() { new InterleavingSchedule.InterleavedGroup(1, InterleavingSchedule.InterleavingType.FullStearns),
+                                                            new InterleavingSchedule.InterleavedGroup(1, InterleavingSchedule.InterleavingType.PartialStearns),
                                                             new InterleavingSchedule.InterleavedGroup(1, InterleavingSchedule.InterleavingType.None) },
 
                                     InnerRadius_mm = Conversions.in_to_mm(20.25),
@@ -126,7 +126,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "Segment 1",
-                                Geometry = new DiscWindingGeometry
+                                Geometry = new DiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -181,7 +181,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "Segment 1",
-                                Geometry = new DiscWindingGeometry
+                                Geometry = new DiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -245,7 +245,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "TV Main",
-                                Geometry = new HelicalWindingGeometry
+                                Geometry = new HelicalSegmentGeometry
                                 {
                                     ConductorType = new CTCConductor
                                     {
@@ -300,7 +300,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "LV Main",
-                                Geometry = new HelicalWindingGeometry
+                                Geometry = new HelicalSegmentGeometry
                                 {
                                     ConductorType = new CTCConductor
                                     {
@@ -360,7 +360,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "HV Main",
-                                Geometry = new DiscWindingGeometry
+                                Geometry = new DiscSegmentGeometry
                                 {
                                     ConductorType = new CTCConductor
                                     {
@@ -420,7 +420,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "RV Main",
-                                Geometry = new MultiStartWindingGeometry
+                                Geometry = new MultiStartSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -459,7 +459,7 @@ namespace TfmrLib
             {
                 Core = new Core
                 {
-                    CoreLegRadius_mm = 720.0/2,
+                    CoreLegRadius_mm = 720.0 / 2,
                     NumLegs = 3,
                     NumWoundLegs = 1,
                     WindowWidth_mm = 530.0,
@@ -476,7 +476,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "TV Main",
-                                Geometry = new HelicalWindingGeometry
+                                Geometry = new HelicalSegmentGeometry
                                 {
                                     NumParallelConductors = 2,
                                     ParallelOrientation = Orientation.Axial,
@@ -541,7 +541,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "LV Main",
-                                Geometry = new DiscWindingGeometry
+                                Geometry = new DiscSegmentGeometry
                                 {
                                     ConductorType = new CTCConductor
                                     {
@@ -604,7 +604,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "HV Upper",
-                                Geometry = new InterleavedDiscWindingGeometry
+                                Geometry = new InterleavedDiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -645,7 +645,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "HV Lower",
-                                Geometry = new InterleavedDiscWindingGeometry
+                                Geometry = new InterleavedDiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -663,7 +663,11 @@ namespace TfmrLib
                                         Elements = new List<SpacerPatternElement>
                                         {
                                             //new() { Count = 7, SpacerHeight_mm = 10.6 },
-                                            new CompositeSpacerPatternElement { Count = 7, SubElements=[new () { Count = 1, SpacerHeight_mm = 6.4 }, new() { Count = 1, SpacerHeight_mm = 4.2 }] },
+                                            new CompositeSpacerPatternElement
+                                            {
+                                                Count = 7,
+                                                SubElements=[new () { Count = 1, SpacerHeight_mm = 6.4 }, new() { Count = 1, SpacerHeight_mm = 4.2 }]
+                                            },
                                             new() { Count = 4, SpacerHeight_mm = 4.2 },
                                             new() { Count = 1, SpacerHeight_mm = 5.3 },
                                             new() { Count = 8, SpacerHeight_mm = 4.2 },
@@ -674,10 +678,18 @@ namespace TfmrLib
                                             new() { Count = 1, SpacerHeight_mm = 5.3 },
                                             new() { Count = 4, SpacerHeight_mm = 4.2 },
                                             //new() { Count = 2, SpacerHeight_mm = 10.6 },
-                                            new CompositeSpacerPatternElement { Count = 2, SubElements=[new () { Count = 1, SpacerHeight_mm = 6.4 }, new() { Count = 1, SpacerHeight_mm = 4.2 }] },
+                                            new CompositeSpacerPatternElement
+                                            {
+                                                Count = 2,
+                                                SubElements=[new() { Count = 1, SpacerHeight_mm = 6.4 }, new() { Count = 1, SpacerHeight_mm = 4.2 }]
+                                            },
                                             new() { Count = 1, SpacerHeight_mm = 5.3 },
                                             //new() { Count = 4, SpacerHeight_mm = 10.6 }
-                                            new CompositeSpacerPatternElement { Count = 4, SubElements=[new () { Count = 1, SpacerHeight_mm = 4.2 }, new() { Count = 1, SpacerHeight_mm = 6.4 }] },
+                                            new CompositeSpacerPatternElement
+                                            {
+                                                Count = 4,
+                                                SubElements=[new() { Count = 1, SpacerHeight_mm = 4.2 }, new() { Count = 1, SpacerHeight_mm = 6.4 }]
+                                            },
                                         }
                                     },
                                     InnerRadius_mm = 1242.0/2,
@@ -695,7 +707,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "RV Upper",
-                                Geometry = new InterleavedDiscWindingGeometry
+                                Geometry = new InterleavedDiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {
@@ -724,7 +736,7 @@ namespace TfmrLib
                             new WindingSegment
                             {
                                 Label = "RV Lower",
-                                Geometry = new InterleavedDiscWindingGeometry
+                                Geometry = new InterleavedDiscSegmentGeometry
                                 {
                                     ConductorType = new RectConductor
                                     {

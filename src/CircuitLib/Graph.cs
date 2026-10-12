@@ -1,4 +1,6 @@
-﻿namespace TfmrLib;
+﻿using System.Collections.Generic;
+
+namespace TfmrLib;
 
 // Keeper of the Nodes
 public class Graph
@@ -21,15 +23,20 @@ public class Graph
     public void Register(IConnectedEntity e)
     {
         _entities.Add(e);
-        foreach (var p in e.Ports)
-            _touches[p].Add(e);
+        foreach (var t in e.Terminals)
+            _touches[t].Add(e);
     }
 
-    internal void OnEntityPortChanged(IConnectedEntity e, Node oldNode, Node newNode)
+    internal void OnEntityNodeChanged(IConnectedEntity e, Node oldNode, Node newNode)
     {
         if (ReferenceEquals(oldNode, newNode)) return;
         _touches[oldNode].Remove(e);
         _touches[newNode].Add(e);
+    }
+
+    public List<IConnectedEntity> GetBranchesForNode(Node n)
+    {
+        return [.. _touches[n]];
     }
 
     // Merge 'from' into 'to'. Returns the survivor (to).
@@ -38,17 +45,17 @@ public class Graph
         // If they're the same object, we done
         if (ReferenceEquals(from, to)) return to;
 
-        // Repoint all entity ports touching 'from' to 'to'
+        // Repoint all entity terminals touching 'from' to 'to'
         // Get list of all entities that the from node touches
         var inc = new List<IConnectedEntity>(_touches[from]);
         foreach (var e in inc)
         {
-            // Get the ports (connectable nodes) of the current current entity
-            var ports = e.Ports;
-            for (int i = 0; i < ports.Count; i++)
-                // If the port matches the from node, repoint to the to node
-                if (ReferenceEquals(ports[i], from))
-                    e.RepointPort(ports[i], to);
+            // Get the terminals (connectable nodes) of the current current entity
+            var terminals = e.Terminals;
+            for (int i = 0; i < terminals.Count; i++)
+                // If the terminal matches the from node, repoint to the to node
+                if (ReferenceEquals(terminals[i], from))
+                    e.RepointTerminal(terminals[i], to);
         }
 
         //Make from node go bye bye

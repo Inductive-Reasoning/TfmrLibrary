@@ -1,9 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
 
-using MathNet.Numerics.LinearAlgebra;
-using System.Numerics;
+using System;
 using System.Diagnostics;
+using System.IO;
+using System.Numerics;
 using System.Text;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace MatrixExponential
 {
@@ -98,7 +100,7 @@ namespace MatrixExponential
                 Console.WriteLine();
             }
         }
-    
+
         public static Matrix<Complex> Exponential(this Matrix<Complex> m)
         {
             if (m.RowCount != m.ColumnCount)

@@ -1,12 +1,14 @@
-﻿using GeometryLib;
-using MathNet.Numerics.LinearAlgebra;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using GeometryLib;
+using MathNet.Numerics.LinearAlgebra;
 using Vector_d = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace TfmrLib
 {
     //TODO: Need to support axial duct space within discs (clack bands)
-    public class DiscWindingGeometry : WindingGeometry
+    public class DiscSegmentGeometry : SegmentGeometry
     {
         // Public properties
         public virtual int NumDiscs { get; set; }
@@ -14,20 +16,20 @@ namespace TfmrLib
         public RadialSpacerPattern SpacerPattern { get; set; }
 
         // Constructors
-        public DiscWindingGeometry()
+        public DiscSegmentGeometry()
         {
-            Type = WindingType.Disc;
+            Type = SegmentType.Disc;
             SpacerPattern = new RadialSpacerPattern();
         }
 
-        public DiscWindingGeometry(WindingSegment parentSegment) : base(parentSegment)
+        public DiscSegmentGeometry(WindingSegment parentSegment) : base(parentSegment)
         {
-            Type = WindingType.Disc;
+            Type = SegmentType.Disc;
             SpacerPattern = new RadialSpacerPattern();
         }
 
         // Computed properties
-        public override double WindingHeight_mm
+        public override double SegmentHeight_mm
         {
             get
             {
@@ -36,7 +38,7 @@ namespace TfmrLib
             }
         }
 
-        public override double WindingRadialBuild_mm
+        public override double SegmentRadialBuild_mm
         {
             get
             {
@@ -52,19 +54,18 @@ namespace TfmrLib
             int turnsPerLayer = TurnsPerDisc * NumParallelConductors;
             int disc = conductorIndex / turnsPerLayer;
             int positionInDisc = conductorIndex % turnsPerLayer;
-            
+
             int layer;
             if (disc % 2 == 0)
             {
                 // Even disc: wound outside→inside, reverse the layer order
                 layer = turnsPerLayer - 1 - positionInDisc;
-            }
-            else
+            } else
             {
                 // Odd disc: wound inside→outside
                 layer = positionInDisc;
             }
-            
+
             return (disc, layer);
         }
 
@@ -72,7 +73,7 @@ namespace TfmrLib
         {
             if (ConductorIndexToElectricalLocation == null)
                 BuildConductorMapping();
-            
+
             return ConductorIndexToElectricalLocation![conductorIndex];
         }
 
@@ -102,7 +103,7 @@ namespace TfmrLib
         {
             int totalConductors = NumDiscs * TurnsPerDisc * NumParallelConductors;
             _conductorLocations = new List<ConductorLocationAxi>(totalConductors);
-            
+
             if (ConductorIndexToElectricalLocation == null)
                 BuildConductorMapping();
 
@@ -110,13 +111,12 @@ namespace TfmrLib
             double z_mid;
             if (ParentSegment.StartLocation == StartNodeLocation.Top)
             {
-                z_mid = DistanceAboveBottomYoke_mm + WindingHeight_mm - ConductorType.TotalHeight_mm / 2; //Turn 0
-                windingDirection = -1; // Winding goes from top to bottom
-            }
-            else
+                z_mid = DistanceAboveBottomYoke_mm + SegmentHeight_mm - ConductorType.TotalHeight_mm / 2; //Turn 0
+                windingDirection = -1; // Winding segment goes from top to bottom
+            } else
             {
                 z_mid = DistanceAboveBottomYoke_mm + ConductorType.TotalHeight_mm / 2; // Turn 0
-                windingDirection = 1; // Winding goes from bottom to top
+                windingDirection = 1; // Winding segment goes from bottom to top
             }
 
             // Logical turn is a shit name.  What we mean here is the turn as it appears in the physical winding numbered from
@@ -130,7 +130,7 @@ namespace TfmrLib
             for (int conductorIndex = 0; conductorIndex < totalConductors; conductorIndex++)
             {
                 var (disc, layer) = GetPhysicalPosition(conductorIndex);
-                
+
                 // Update z position when moving to new disc
                 if (conductorIndex > 0 && disc > GetPhysicalPosition(conductorIndex - 1).Disc)
                 {
@@ -156,8 +156,7 @@ namespace TfmrLib
                     double partialTurnFraction = (turnsInThisDisc - Math.Floor(turnsInThisDisc)) / 2; // Fraction of a turn at start or end of disc
                     if (partialTurnFraction == 0) partialTurnFraction = 1.0;
                     turn_length = 2.0 * Math.PI * r_mid * partialTurnFraction;
-                }
-                else
+                } else
                 {
                     turn_length = 2.0 * Math.PI * r_mid;
                 }
@@ -202,8 +201,7 @@ namespace TfmrLib
                     var insulation_surface = geometry.AddSurface(insulationBoundary, conductorBoundary);
                     Tags.TagEntityByLocation(insulation_surface, locationKey, TagType.InsulationSurface);
                     conductorins_bdrys[conductorIndex] = insulationBoundary;
-                }
-                else
+                } else
                 {
                     conductorins_bdrys[conductorIndex] = conductorBoundary;
                 }
@@ -212,7 +210,7 @@ namespace TfmrLib
                 var conductor_surface = geometry.AddSurface(conductorBoundary);
                 Tags.TagEntityByLocation(conductor_surface, locationKey, TagType.ConductorSurface);
             }
-            
+
             // Return outer boundary of conductor representations to allow "holes" in the remainder of the geometry
             return conductorins_bdrys;
         }
@@ -229,7 +227,7 @@ namespace TfmrLib
                 R[t, t] = ConductorType.DCResistance;
             }
 
-            double sigma_c = 1 / ConductorType.rho_c;
+            double sigma_c = 1 / ConductorType.ConductorMaterial.rho;
             Complex eta = Complex.Sqrt(2d * Math.PI * f * Constants.mu_0 * sigma_c * Complex.ImaginaryOne) * ConductorType.BareWidth_mm / 2d;
             double R_skin = (1 / (sigma_c * ConductorType.BareHeight_mm * ConductorType.BareWidth_mm) * eta * Complex.Cosh(eta) / Complex.Sinh(eta)).Real;
             //Console.WriteLine($"R_skin: {R_skin}");
@@ -254,5 +252,5 @@ namespace TfmrLib
         }
     }
 
-    
+
 }

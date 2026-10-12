@@ -1,6 +1,6 @@
 ﻿namespace TfmrLib
 {
-    public class MultiStartWindingGeometry : HelicalWindingGeometry
+    public class MultiStartSegmentGeometry : HelicalSegmentGeometry
     {
         public int NumberOfStarts { get; set; }
 
@@ -10,14 +10,14 @@
 
         public override int NumMechTurns => NumberOfStarts * (NumberOfTurnsPerStart + 1); // Total mechanical turns in the winding
 
-        public MultiStartWindingGeometry()
+        public MultiStartSegmentGeometry()
         {
-            Type = WindingType.MultiStart;
+            Type = SegmentType.MultiStart;
         }
 
-        public MultiStartWindingGeometry(WindingSegment parentSegment) : base(parentSegment)
+        public MultiStartSegmentGeometry(WindingSegment parentSegment) : base(parentSegment)
         {
-            Type = WindingType.MultiStart;
+            Type = SegmentType.MultiStart;
         }
     }
 

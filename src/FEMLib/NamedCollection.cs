@@ -1,8 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 
 namespace TfmrLib.FEM
 {
-    public class NamedCollection<T> : IEnumerable<T> where T: INamed
+    public class NamedCollection<T> : IEnumerable<T> where T : INamed
     {
         private Dictionary<string, T> _collection = [];
 
@@ -13,7 +14,8 @@ namespace TfmrLib.FEM
 
         public T this[string name]
         {
-            get {
+            get
+            {
                 return _collection[name];
             }
         }
